@@ -25,10 +25,16 @@ class _NotficationState extends State<Notfication> {
   void addnotification() {
     for (int i = 0; i < 6; i++) {
       var random = Random();
-      String it = random.toString();
+
       var st = random.nextInt(3);
+      const _chars = 'ABCD';
+      Random _rnd = Random();
+      String getRandomString(int length) =>
+          String.fromCharCodes(Iterable.generate(
+              length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+      var onm = getRandomString(1);
       notification_list.add(
-        NotificationData("Itam A", "01 01 2023 6:59 am", 25 - i, st),
+        NotificationData("Itam $onm", "01 01 2023 6:59 am", 25 - i, st),
       );
     }
     //  print("object");
@@ -98,17 +104,15 @@ class _NotficationState extends State<Notfication> {
                                   itemBuilder: (BuildContext ctxt, int index) {
                                     if (notification_list[index].status == 0) {
                                       colors = Colors.red;
-                                      card_colors = Colors.red.withOpacity(0.2);
+                                      card_colors = Colors.red.withAlpha(50);
                                     } else if (notification_list[index]
                                             .status ==
                                         1) {
                                       colors = Colors.yellow;
-                                      card_colors =
-                                          Colors.yellow.withOpacity(0.2);
+                                      card_colors = Colors.yellow.withAlpha(50);
                                     } else {
                                       colors = Colors.grey;
-                                      card_colors =
-                                          Colors.grey.withOpacity(0.2);
+                                      card_colors = Colors.grey.withAlpha(50);
                                     }
 
                                     return Dismissible(

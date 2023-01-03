@@ -25,7 +25,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController controller;
-  // final items = List<Items>;
   late int counter;
   List<String> ficon = [];
   List<Favourites> fav_list = [];
@@ -33,6 +32,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Color colors = Colors.black;
   Color _iconColor = Colors.transparent;
   double _status = 2;
+  //testing data
+  List<String> words = [
+    "Object A",
+    "Object B",
+    "Object C",
+    "Object D",
+    "Object E"
+  ];
+  List<String> savedWords = [];
 
   void contain(List<Favourites> fav_list, Favourites favourites) {
     if (fav_list.contains(favourites)) {
@@ -48,15 +56,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool isNotified = false;
   final List _items = [];
   late List data;
-
   late IconData _icon = Icons.star_border;
-  late Color _color = Colors.transparent;
-  // final List<String> savedWords = [];
-
-  // final _myfav = Hive.box("ItemBox");
+  late Color _color = Colors.white;
   int length = 0;
   var isExpanded = false;
   int currentIndex = 0;
+  late String text1, text2;
   int _current = 0;
   final CarouselController _controller = CarouselController();
   void _onReorder(int oldIndex, int newIndex) {
@@ -69,29 +74,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     addobject();
-    getlength();
-
-    // prefs = await SharedPreferences.getInstance();
     controller = BottomSheet.createAnimationController(this);
     controller.duration = const Duration(seconds: 1);
     controller.reverseDuration = const Duration(seconds: 1);
     controller.drive(CurveTween(curve: Curves.linear));
-    setState(() {
-      if (_status == 0) {
-        colors = Colors.red.withOpacity(0.5);
-      } else if (_status == 1) {
-        colors = Color.fromARGB(255, 120, 121, 119);
-      } else if (_status == 2) {
-        colors = Color.fromARGB(255, 252, 252, 252);
-      }
-    });
     super.initState();
+    setState(() {
+      getlength();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
+          //gradient color
             gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
@@ -102,6 +99,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: ListView(children: [
+
+          //heading
             Column(
               children: <Widget>[
                 const Gap(30),
@@ -159,18 +158,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       iconSize: 35,
                       color: Colors.white,
                       onPressed: () {
-                        // showModalBottomSheet<void>(
-                        //     context: (context),
-                        //     enableDrag: true,
-                        //     transitionAnimationController: controller,
-                        //     isScrollControlled: true,
-                        //     isDismissible: true,
-                        //     builder: (context) {
-                        //       return const SideBar();
-                        //     });
-
                         showModalSideSheet<Void>(
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            width: MediaQuery.of(context).size.width * 0.955,
                             context: (context),
                             barrierDismissible: true,
                             barrierColor: Colors.transparent,
@@ -179,8 +168,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             elevation: 20,
                             useRootNavigator: true,
                             body: Container(
-                              foregroundDecoration: BoxDecoration(
-                                  color: Color.fromARGB(0, 2, 2, 2)),
+                              foregroundDecoration: const BoxDecoration(
+                                color: Color.fromARGB(0, 2, 2, 2)),
                               padding: EdgeInsets.only(top: 100),
                               color: Color.fromARGB(255, 12, 120, 209),
                               child: const SideBar(),
@@ -231,13 +220,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       if (fav_list.isNotEmpty)
                         Expanded(
                           child: SizedBox(
-                            height: 250.0,
+                            height: 290.0,
                             child: ReorderableGridView.extent(
                               maxCrossAxisExtent: 270,
                               onReorder: _onReorder,
                               childAspectRatio: 1.37,
                               shrinkWrap: true,
-                              children: fav_list.map((ind) {
+                              children: fav_list.map((ind)  {
                                 return Card(
                                   color: colors,
                                   borderOnForeground: true,
@@ -247,7 +236,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   key: ValueKey(ind),
                                   child: CarouselSlider(
                                     options: CarouselOptions(
-                                        enlargeCenterPage: true,
+                                        enlargeCenterPage: false,
                                         scrollDirection: Axis.horizontal,
                                         autoPlay: false,
                                         onPageChanged: (index, reason) {
@@ -255,7 +244,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             _current = index;
                                           });
                                         }),
-                                    items: fav_list.map((ind) {
+                                    items: obj_list.map((ind1) {
+                                      if (ind.status == 0) {
+                                        colors = Colors.red;
+                                        text1 = "Alarm";
+                                        text2 = ind1.objectname;
+                                      } else if (ind.status == 1) {
+                                        colors =
+                                            Color.fromARGB(255, 104, 105, 102);
+                                        text1 = "Offline";
+                                        text2 = ind1.objectname;
+                                      } else {
+                                        text1 = ind1.objectname;
+                                        text2 = ind.temp.toString() + '°C';
+                                        colors = Colors.white;
+                                      }
+
                                       return Builder(
                                         builder: (BuildContext context) {
                                           return Container(
@@ -320,7 +324,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             ),
                                                             Text(
                                                               ind.last_update,
-                                                              style: TextStyle(
+                                                              style: const TextStyle(
                                                                   fontSize: 11,
                                                                   fontWeight:
                                                                       FontWeight
@@ -332,7 +336,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                         Column(
                                                           children: [
                                                             Text(
-                                                              ind.object_name,
+                                                              text1,
                                                               style: const TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
@@ -341,7 +345,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             ),
                                                             Gap(4),
                                                             Text(
-                                                              '${ind.temp}°C',
+                                                              text2,
                                                               style: const TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
@@ -353,7 +357,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .center,
-                                                              children: fav_list
+                                                              children: obj_list
                                                                   .asMap()
                                                                   .entries
                                                                   .map((entry) {
@@ -366,7 +370,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                       Container(
                                                                     width: 9.0,
                                                                     height: 9.0,
-                                                                    margin: EdgeInsets.symmetric(
+                                                                    margin: const EdgeInsets
+                                                                            .symmetric(
                                                                         vertical:
                                                                             8.0,
                                                                         horizontal:
@@ -382,63 +387,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                 );
                                                               }).toList(),
                                                             ),
-                                                            //_status = fav_list[0].status.toDouble();
                                                           ],
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                  //   if (ind.status == 0)
-                                                  //     Column(
-                                                  //       mainAxisAlignment:
-                                                  //           MainAxisAlignment
-                                                  //               .start,
-                                                  //       children: [
-                                                  //         Text(
-                                                  //           ind.itemname,
-                                                  //           style: TextStyle(
-                                                  //               color: Colors
-                                                  //                   .white60),
-                                                  //         ),
-                                                  //         Gap(25),
-                                                  //         Text(
-                                                  //           'Alarm',
-                                                  //           style: TextStyle(
-                                                  //               fontSize: 20,
-                                                  //               fontWeight:
-                                                  //                   FontWeight
-                                                  //                       .bold,
-                                                  //               color:
-                                                  //                   Colors.white),
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   if (ind.status == 1)
-                                                  //     Column(
-                                                  //       mainAxisAlignment:
-                                                  //           MainAxisAlignment
-                                                  //               .start,
-                                                  //       children: [
-                                                  //         Text(
-                                                  //           ind.itemname,
-                                                  //           style: TextStyle(
-                                                  //               color: Colors
-                                                  //                   .white60),
-                                                  //         ),
-                                                  //         Gap(25),
-                                                  //         Text(
-                                                  //           'Ofline',
-                                                  //           style: TextStyle(
-                                                  //               fontSize: 20,
-                                                  //               fontWeight:
-                                                  //                   FontWeight
-                                                  //                       .bold,
-                                                  //               color:
-                                                  //                   Colors.white),
-                                                  //         )
-                                                  //       ],
-                                                  //     ),
-                                                  //
                                                 ]),
                                           );
                                         },
@@ -546,49 +499,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                   'assets/loadjson/item_data.json'),
                                                           builder: (context,
                                                               snapshot) {
-                                                            // var new_data = json.decode(
-                                                            //     snapshot.data.toString());
-
-                                                            // final Favourites
-                                                            //     favlist =
-                                                            //     Favourites(
-                                                            //         alldata
-                                                            //             .itam[
-                                                            //                 index]
-                                                            //             .itemName,
-                                                            //         "8: 34 PM",
-                                                            //         "Object A",
-                                                            //         "11: 33 Pm",
-                                                            //         23,
-                                                            //         2);
-
-                                                            // ignore: iterable_contains_unrelated_type
-                                                            // fav_list.any((element) =>  element.itemname == alldata.itam[index].itemName);
-
-                                                            // fav_list.forEach(
-                                                            //   (element) {
-                                                            //     if (element
-                                                            //             .itemname
-                                                            //             .trim() ==
-                                                            //         alldata
-                                                            //             .itam[
-                                                            //                 index]
-                                                            //             .itemName) {
-                                                            //       isSaved =
-                                                            //           true;
-                                                            //     }
-                                                            //   },
-                                                            // );
-                                                            // var isSaved = fav_list.firstWhere((element) =>element.itemname == alldata.itam[index].itemName);
-
-                                                            var isSaved = false;
-
                                                             return ListView
                                                                 .builder(
                                                               itemBuilder:
                                                                   (BuildContext
                                                                           context,
                                                                       int index) {
+                                                                String word =
+                                                                    words[
+                                                                        index];
+                                                                bool isSaved =
+                                                                    savedWords
+                                                                        .contains(
+                                                                            word);
                                                                 return Card(
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -599,29 +522,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                           onTap:
                                                                               () {
                                                                             setState(() {
-                                                                              isSaved = !isSaved;
-                                                                              print(isSaved);
                                                                               if (fav_list.where((element) => element.itemname == alldata.itam[index].itemName).isNotEmpty) {
                                                                                 fav_list.removeWhere((element) => element.itemname == alldata.itam[index].itemName);
-                                                                                // if (isSaved) {
-                                                                                //   ficon.remove(index);
-                                                                                // }
                                                                               } else {
                                                                                 var random = Random();
                                                                                 var st = random.nextInt(3);
-                                                                                fav_list.add(Favourites(alldata.itam[index].itemName, "8: 34 PM", "Object A", "11: 33 Pm", 23, st));
-                                                                                // ficon.add(alldata.itam[index].itemName.trim());
-                                                                                // _color = Colors.yellow;
-                                                                                // _icon = Icons.star;
-                                                                                // savedWords.add(alldata.itam[index].itemName);
-                                                                                //await prefs.setString('item_name', alldata.itam[index].itemName);
-
-                                                                                // _myfav.add(alldata.itam[index]);
-                                                                                // savedWords = (alldata.itam[index] as List<Map<String, String>>).map((e) => e["url"]).toList();
+                                                                                fav_list.add(Favourites(alldata.itam[index].itemName, "8: 34 PM", "Object A", "11: 33 Pm", 23 + index, st));
                                                                               }
 
-                                                                              // isSaved = !isSaved;
-                                                                              //  fav_list.removeWhere((element) => element.itemname == fav_list[index].itemname);
+                                                                              if (isSaved) {
+                                                                                savedWords.remove(word);
+                                                                              } else {
+                                                                                savedWords.add(word);
+                                                                              }
                                                                             });
                                                                           },
                                                                           child:
@@ -705,10 +618,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void addobject() {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 4; i++) {
       var random = Random();
       String it = random.toString();
-      int st = random.nextInt(3);
+      int st = random.nextInt(2);
       const _chars = 'ABCD';
       Random _rnd = Random();
       String getRandomString(int length) =>
@@ -716,7 +629,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
       var onm = getRandomString(1);
       obj_list.add(
-        Objects("Objct $onm", "01 01 2023 6:59 am", 25 - i, st),
+        Objects("Object $onm", "01 01 2023 6:59 am", 25 - i, st),
       );
     }
     print("object");

@@ -1,16 +1,9 @@
 // ignore_for_file: unnecessary_const
 
 import 'dart:math';
-
-import 'package:ethiostar_testing/widget/barchart.dart';
-import 'package:charts_painter/chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:gap/gap.dart';
-import './scrollable_chart_screen.dart';
-import '../screens/home_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ItemChartDetail extends StatefulWidget {
@@ -27,6 +20,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
   late TabController tabController = TabController(length: 3, vsync: this);
   late String objectname = "Object A";
   late String last_updated = "4:39 PM";
+  late String text1;
   Color colors_ = Colors.white;
   Color card_colors = Colors.black;
   var _status;
@@ -80,26 +74,26 @@ class _ItemChartDetailState extends State<ItemChartDetail>
               const Gap(10),
               Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.dashboard,
                     color: Colors.black,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Text(
                     widget.item,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black,
                         fontSize: 24,
                         fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              Divider(
+              const Divider(
                 color: Colors.amber,
               ),
               Gap(10),
@@ -137,33 +131,6 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                   physics: const NeverScrollableScrollPhysics(),
                   controller: tabController,
                   children: [
-                    //         Chart(
-                    //   state: ChartState<void>(
-                    //     data: ChartData.fromList(
-                    //       [1, 3, 4, 2, 7, 6, 2, 5, 4,1, 3, 4, 2, 7, 6, 2, 5, 4,1, 3, 4, 2, 7, 6, 2, 5, 4,1, 3, 4, 2, 7, 6, 2, 5, 4]
-                    //           .map((e) => BarValue<void>(e.toDouble()))
-                    //           .toList(),
-                    //       axisMax: 8,
-                    //     ),
-                    //     itemOptions: BarItemOptions(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                    //       barItemBuilder: (_) => BarItem(
-                    //         color: Theme.of(context).accentColor,
-                    //         radius: BorderRadius.vertical(top: Radius.circular(12.0)),
-                    //       ),
-                    //     ),
-                    //     backgroundDecorations: [
-                    //       GridDecoration(
-                    //         verticalAxisStep: 1,
-                    //         horizontalAxisStep: 4,
-                    //         gridColor: Theme.of(context).dividerColor,
-                    //       ),
-                    //       SparkLineDecoration(
-                    //         lineColor: Theme.of(context).accentColor,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     SafeArea(
                       child: SfCartesianChart(
                         legend: Legend(
@@ -201,12 +168,12 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                               name: 'Temprature',
                               markerSettings: MarkerSettings(
                                 isVisible: true,
+
                               )),
                         ],
                         primaryXAxis: CategoryAxis(),
                       ),
                     ),
-
                     SafeArea(
                       child: SfCartesianChart(
                         legend: Legend(
@@ -231,7 +198,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                   ],
                 ),
               ),
-              Gap(10),
+             const Gap(10),
               Row(
                 children: const [
                   SizedBox(
@@ -243,10 +210,10 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                   ),
                 ],
               ),
-              Gap(9),
+              const Gap(9),
               Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Text(
@@ -255,7 +222,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                   ),
                 ],
               ),
-              Gap(9),
+              const Gap(9),
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 Expanded(
                     child: SizedBox(
@@ -268,15 +235,22 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                       itemBuilder: (ctx, i) {
                         if (obj_list[i].status == 0) {
                           colors_ = Colors.red;
-                          card_colors = Color.fromARGB(255, 224, 219, 219).withOpacity(0.2);
+                          card_colors = Color.fromARGB(255, 224, 219, 219)
+                              .withOpacity(0.2);
+                          text1 = "Alarm";
                         } else if (obj_list[i].status == 1) {
                           colors_ = Color.fromARGB(255, 150, 147, 147);
-                          card_colors =
-                              Color.fromARGB(255, 247, 246, 243).withOpacity(0.2);
+                          card_colors = Color.fromARGB(255, 247, 246, 243)
+                              .withOpacity(0.2);
+                          text1 = "Offline";
+                        } else if (obj_list[i].status == 2) {
+                          colors_ = Color.fromARGB(255, 216, 219, 43);
+                          card_colors = Color.fromARGB(255, 247, 246, 243)
+                              .withOpacity(0.2);
+                          text1 = "Warning";
                         } else {
                           colors_ = Colors.white;
-                          // card_colors =
-                          //     Colors.grey.withOpacity(0.2);
+                          text1 = obj_list[i].temp.toString() + '°C';
                         }
                         return Card(
                           child: Container(
@@ -295,7 +269,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                                           obj_list[i].last_update.trim());
                                     });
 
-                                    Navigator.pop(context, ItemChartDetail);
+                                   setState(() {});
                                   },
                                   child: Column(
                                     crossAxisAlignment:
@@ -313,7 +287,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                                       Row(
                                         children: [
                                           Text(
-                                            '${obj_list[i].temp}*C',
+                                            text1,
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 15,
@@ -329,7 +303,8 @@ class _ItemChartDetailState extends State<ItemChartDetail>
                           ),
                         );
                       },
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         childAspectRatio: 1.15,
                         crossAxisSpacing: 0.0,
@@ -355,7 +330,7 @@ class _ItemChartDetailState extends State<ItemChartDetail>
     for (int i = 0; i < 4; i++) {
       var random = Random();
       String it = random.toString();
-      int st = random.nextInt(3);
+      int st = random.nextInt(4);
       const _chars = 'ABCD';
       Random _rnd = Random();
       String getRandomString(int length) =>
